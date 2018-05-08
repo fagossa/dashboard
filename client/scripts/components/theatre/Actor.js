@@ -19,13 +19,16 @@ const Actor = Vue.component('actor', {
     </div>\
   `,
   created: function() {
+    console.log("Actor.js :: created");
     this.ssu.onend = this.onend;
   },
   watch: {
-    text: function (newText) {
+    text: function(newText) {
+      console.log("Actor.js :: text");
       this.readText(newText);
     },
     onend: function(newFunction) {
+      console.log("Actor.js :: onend");
       this.ssu.onend = newFunction;
     },
   },

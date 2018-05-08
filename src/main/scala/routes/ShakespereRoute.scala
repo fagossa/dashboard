@@ -4,30 +4,26 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream._
 import akka.stream.scaladsl._
-import akka.{ NotUsed }
+import akka.NotUsed
 import akka.actor.ActorSystem
+
 import scala.concurrent.duration._
 import akka.http.scaladsl.marshalling.{Marshaller, ToResponseMarshaller}
 import akka.http.scaladsl.model.HttpEntity.ChunkStreamPart
-import spray.json.DefaultJsonProtocol._
 import models.Character
 import repositories.ShakespeareRepository
-import akka.http.scaladsl.model.ws.{ TextMessage, Message }
-import spray.json._
+import akka.http.scaladsl.model.ws.{Message, TextMessage}
+import play.api.libs.json.Json
 
-class ShakespeareRoute(workingDirectory: String)(implicit
+class ShakespeareRoute(workingDirectory: String, repository: ShakespeareRepository)(implicit
   system: ActorSystem,
   materializer: ActorMaterializer
 ) {
-
-  val repository = new ShakespeareRepository()
 
   val source: Source[Character, NotUsed] = Source(repository.romeoEtJuliette)
   val romeoEtJulietteIterable = repository.romeoEtJuliette.toIterator
 
   def toNewLineFlow[A]: Flow[A, String, NotUsed] = Flow[A].map(_.toString + "\n")
-
-  implicit val characterFormat = jsonFormat2(Character)
 
   implicit val toResponseMarshaller: ToResponseMarshaller[Source[String, Any]] =
     Marshaller.opaque { items =>
@@ -41,8 +37,12 @@ class ShakespeareRoute(workingDirectory: String)(implicit
   def routes = path("romeoEtJuliette") {
     handleWebSocketMessages(Flow[Message].mapConcat {
       case tm: TextMessage if romeoEtJulietteIterable.hasNext =>
-        TextMessage(romeoEtJulietteIterable.next().toJson.toString) :: Nil
+        println("ShakespeareRoute::socket - 1")
+        val character: Character = romeoEtJulietteIterable.next()
+        TextMessage(Json.stringify(Json.toJson(character))) :: Nil
+
       case other =>
+        println("ShakespeareRoute::socket - 2")
         println(other)
         Nil
     })

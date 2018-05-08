@@ -2,7 +2,6 @@ package routes
 
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 
 class HelloRoute() {
 

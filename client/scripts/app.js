@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import { Message } from './components/Message';
 import { TodoList } from './components/TodoList';
 import { Speaker } from './components/Speaker';
 import { Play } from './components/theatre/Actor';
@@ -18,18 +17,22 @@ new Vue({
     romeoEtJulietteURL: '/theatre/romeoEtJuliette',
     ssu: new SpeechSynthesisUtterance(),
     romeoSpeaks: function(text, onend) {
+      console.log("app.js :: romeoSpeaks");
       this.ssu.text = text;
       console.log(text);
       speechSynthesis.cancel();
       speechSynthesis.speak(this.ssu);
     },
     unknownSpeaks: () => {
+      console.log("app.js :: unknownSpeaks");
       this.ssu.text = 'Qui parle ?';
       window.speechSynthesis.speak(this.ssu);
     },
   },
   methods: {
     readStream: function() {
+      console.log("app.js :: readStream");
+
       const connection = new WebSocket('ws://localhost:8080/theatre/romeoEtJuliette');
       window.speechSynthesis.cancel()
       this.ssu.onend = () => connection.send('Ping');

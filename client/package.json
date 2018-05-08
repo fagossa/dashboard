@@ -1,7 +1,7 @@
 {
-  "name": "hackday-akka-vue",
+  "name": "xke-dashboard",
   "version": "1.0.0",
-  "description": "Une petite application pour jouer avec Akka et VueJS",
+  "description": "Dashboard",
   "main": "index.js",
   "scripts": {
     "build": "webpack --config config/webpack.config.js",
@@ -9,18 +9,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Giovannini/hackday-akka-vue.git"
+    "url": "git+https://github.com/fagossa/xke-dashboard.git"
   },
   "keywords": [
     "akka",
     "vuejs"
   ],
-  "author": "Thomas GIOVANNINI",
+  "author": "Fabian Gutierrez",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Giovannini/hackday-akka-vue/issues"
+    "url": "https://github.com/fagossa/xke-dashboard/issues"
   },
-  "homepage": "https://github.com/Giovannini/hackday-akka-vue#readme",
+  "homepage": "https://github.com/fagossa/xke-dashboard#readme",
   "dependencies": {
     "vue": "^2.5.16"
   },

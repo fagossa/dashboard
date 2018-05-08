@@ -2,7 +2,7 @@ package repositories
 
 import models.Character
 
-class ShakespeareRepository() {
+class ShakespeareRepository {
 
   val romeoEtJuliette = scala.collection.immutable.Seq(
     Character("Romeo", "Il se rit des plaies, celui qui n'a jamais reçu de blessures !"),

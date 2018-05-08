@@ -2,8 +2,10 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
-import scala.io.StdIn
+import board.{BoardRoutes, BoardService}
+import repositories.{ItemRepository, ShakespeareRepository}
 
+import scala.io.StdIn
 import routes.HelloRoute
 import routes.JsonRoutes
 import routes.IndexRoutes
@@ -12,9 +14,9 @@ import routes.StreamingRoute
 import routes.ShakespeareRoute
 
 object Application extends App {
-  implicit val system = ActorSystem("my-system")
+  implicit val system = ActorSystem("go-as-function-system")
   implicit val materializer = ActorMaterializer()
-  // needed for the future flatMap/onComplete in the end
+
   implicit val executionContext = system.dispatcher
 
   val port: Int = 8080
@@ -23,11 +25,12 @@ object Application extends App {
 
   val route =
     path("hello") { new HelloRoute().routes } ~
-    pathPrefix("json") { new JsonRoutes().routes } ~
+    pathPrefix("json") { new JsonRoutes(new ItemRepository()).routes } ~
     pathPrefix("assets") { new AssetsRoute(workingDirectory).routes } ~
     pathPrefix("streaming") { new StreamingRoute().routes } ~
-    pathPrefix("theatre") { new ShakespeareRoute(workingDirectory).routes } ~
-    new IndexRoutes(workingDirectory).routes
+    pathPrefix("theatre") { new ShakespeareRoute(workingDirectory, new ShakespeareRepository()).routes } ~
+    new IndexRoutes(workingDirectory).routes ~
+    pathPrefix("board") { new BoardRoutes(new BoardService()).routes }
 
   val bindingFuture = Http().bindAndHandle(route, "localhost", port)
 
