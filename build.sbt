@@ -10,7 +10,10 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-http"           % akkaHttpVersion,
       "de.heikoseeberger" %% "akka-http-play-json" % "1.20.1",
-
+      // logs
+      "ch.qos.logback"    %  "logback-classic"     % "1.2.3" ,
+      "com.typesafe.akka" %% "akka-slf4j"          % "2.5.2",
+      // test
       "com.typesafe.akka" %% "akka-http-testkit"   % akkaHttpVersion % Test,
       "org.scalatest"     %% "scalatest"           % "3.0.5" % Test
     )

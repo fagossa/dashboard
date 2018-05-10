@@ -1,4 +1,4 @@
-package routes
+package org.fabian.dashboard.routes
 
 import akka.http.scaladsl.server.Directives._
 

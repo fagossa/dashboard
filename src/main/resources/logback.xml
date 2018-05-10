@@ -1,0 +1,24 @@
+<configuration>
+
+    <configuration>
+        <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    </configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%level] %date %logger{15} - %thread - %message%n%xException{10}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="STDOUT" />
+    </appender>
+
+    <logger name="ch.qos.logback.classic" level="WARN" />
+    <logger name="akka" level="WARN"/>
+
+    <root level="INFO">
+        <appender-ref ref="ASYNCSTDOUT" />
+    </root>
+
+</configuration>

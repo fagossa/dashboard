@@ -1,4 +1,4 @@
-package routes
+package org.fabian.dashboard.routes
 
 import scala.concurrent.Future
 
@@ -8,14 +8,14 @@ import akka.http.scaladsl.server.Directives._
 
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
-import models.Item
-import repositories.ItemRepository
+import org.fabian.dashboard.models.Item
+import org.fabian.dashboard.repositories.ItemRepository
 
 import scala.concurrent.ExecutionContext
 
 class JsonRoutes(itemRepository: ItemRepository)(implicit ec: ExecutionContext) {
 
-  //implicit val itemFormat = jsonFormat2(models.Item)
+  //implicit val itemFormat = jsonFormat2(org.fabian.dashboard.models.Item)
   implicit val jsonStreamingSupport = EntityStreamingSupport.json()
 
   def routes = get {

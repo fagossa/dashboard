@@ -1,6 +1,6 @@
-package repositories
+package org.fabian.dashboard.repositories
 
-import models.Item
+import org.fabian.dashboard.models.Item
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 

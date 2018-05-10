@@ -1,4 +1,4 @@
-package models
+package org.fabian.dashboard.models
 
 import play.api.libs.json.{Format, Json}
 
