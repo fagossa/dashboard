@@ -1,6 +1,7 @@
 lazy val akkaHttpVersion = "10.1.1"
 
 lazy val root = (project in file("."))
+  .enablePlugins(NpmPlugin, JavaAppPackaging)
   .settings(
     inThisBuild(List(
       organization := "golang",
@@ -18,6 +19,8 @@ lazy val root = (project in file("."))
       "org.scalatest"     %% "scalatest"           % "3.0.5" % Test
     )
   )
+
+mappings in (Compile, packageDoc) := Seq()
 
 scalacOptions := Seq(
   "-encoding", "UTF-8",
