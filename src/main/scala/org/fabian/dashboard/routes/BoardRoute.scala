@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory
 
 import org.fabian.dashboard.board.BoardService
 
-class BoardRoute(
-  workingDirectory: String,
-  service: BoardService)
+class BoardRoute(service: BoardService)
 (implicit system: ActorSystem, materializer: ActorMaterializer) {
   val logger = LoggerFactory.getLogger(getClass)
 
@@ -29,9 +27,6 @@ class BoardRoute(
           .mapAsync(1)(_ => service.boardResults.map(result => ServerSentEvent(result.stringify)))
           .keepAlive(1.second, () => ServerSentEvent.heartbeat)
       })
-  } ~
-    pathEnd {
-      getFromFile(s"$workingDirectory/theatre.html")
-    }
+  }
 
 }

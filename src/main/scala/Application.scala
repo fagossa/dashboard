@@ -35,7 +35,7 @@ object Application extends App {
     pathPrefix("json") { new JsonRoutes(new ItemRepository()).routes } ~
     pathPrefix("assets") { new AssetsRoute(workingDirectory).routes } ~
     pathPrefix("streaming") { new StreamingRoute().routes } ~
-    pathPrefix("board") { new BoardRoute(workingDirectory, new BoardService()).routes } ~
+    pathPrefix("board") { new BoardRoute(new BoardService()).routes } ~
     new IndexRoutes(workingDirectory).routes
 
   logger.info(s"Starting server on ${interface}:${port}")
@@ -56,6 +56,7 @@ object Application extends App {
         stopAll()
       }
     }
+    ()
   }
 
   private def stopAll(): Unit = {

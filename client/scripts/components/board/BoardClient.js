@@ -44,7 +44,7 @@ export const Board = Vue.component('board', {
     <div class="board-scene">\
       Loading events
       <line-chart
-        :data="stockData"
+        :chartData="stockData"
         :options="chartOptions"
         :width="800"
         :height="400"
@@ -65,7 +65,7 @@ export const Board = Vue.component('board', {
           label: s.name,
           backgroundColor: s.background,
           borderColor: s.background,
-          data: s.measures.map(m => m.value),
+          data: s.billed.map(m => m.value),
           fill: false
         }
       };
@@ -73,7 +73,6 @@ export const Board = Vue.component('board', {
       es.addEventListener('message', event => {
         if (this.isJsonString(event.data)) {
           let data = JSON.parse(event.data);
-          //console.log(data);
           this.stockData = {
             labels: data.labels.map(label => label.name),
             datasets: data.scores.map(score => buildScore(score))
