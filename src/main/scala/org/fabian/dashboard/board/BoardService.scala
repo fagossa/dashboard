@@ -21,18 +21,18 @@ class BoardService(implicit ec: ExecutionContext) {
     )
   }
 
-  def updateScore(payload: MeasurePayload): Future[String] = {
+  def updateScore(payload: MeasurePayload): Future[Option[TeamScore]] = {
     val name = payload.user
     state.get(name) match {
       case Some(team) =>
         val updatedScore = team.addMeasures(payload.buildMeasures)
         this.state.put(name, updatedScore)
-        Future.successful(name)
+        Future.successful(Some(updatedScore))
 
       case None =>
         val score = TeamScore(name, background = randomColor).addMeasures(payload.buildMeasures)
         this.state += (name -> score)
-        Future.successful(name)
+        Future.successful(Some(score))
     }
   }
 

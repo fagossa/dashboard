@@ -2,13 +2,19 @@ package org.fabian.dashboard.board
 
 import java.time.LocalDateTime
 
-import org.scalatest.concurrent.{ScalaFutures}
+import scala.collection.immutable.Queue
+
+import akka.http.scaladsl.testkit.ScalatestRouteTest
+
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.libs.json.Json
 
-import scala.collection.immutable.Queue
+import org.fabian.dashboard.routes.BoardRoute
 
-class TeamScoreSpec extends WordSpec with MustMatchers with ScalaFutures {
+class TeamScoreSpec extends WordSpec with MustMatchers with ScalaFutures with ScalatestRouteTest {
+
+  implicit val ec = scala.concurrent.ExecutionContext.global
 
   "a TeamScore" should {
 
@@ -65,8 +71,6 @@ class TeamScoreSpec extends WordSpec with MustMatchers with ScalaFutures {
       result.get.buildMeasures.value must be(BigDecimal(10))
     }
 
-    implicit val ec = scala.concurrent.ExecutionContext.global
-
     "create score when do not exists" in {
       val service = new BoardService
       // When
@@ -109,6 +113,29 @@ class TeamScoreSpec extends WordSpec with MustMatchers with ScalaFutures {
       result.scores must have size 3
       result.scores.map(_.billed.size) must be (List(1, 1, 1))
       result.scores.flatMap(_.billed).map(_.value).toSet must be(Set(BigDecimal(10), BigDecimal(15), BigDecimal(20)))
+    }
+
+  }
+
+  "a BoardRoute" must {
+
+    "accept post messages" in {
+      import akka.http.scaladsl.model._
+      import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
+      //when
+      val routes = new BoardRoute(new BoardService()).routes
+      val payload = MeasurePayload("toto", 35)
+
+      Post("/events", payload) ~> routes ~> check {
+        //then
+        status mustBe StatusCodes.OK
+        contentType mustBe ContentTypes.`application/json`
+
+        val resultScore = entityAs[TeamScore]
+        resultScore.name must be("toto")
+        resultScore.billed.map(_.value) must be(Queue(BigDecimal(35)))
+      }
     }
 
   }

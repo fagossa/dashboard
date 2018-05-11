@@ -1,25 +1,28 @@
 package org.fabian.dashboard.routes
 
 import scala.concurrent.duration._
-
 import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.sse.ServerSentEvent
+import akka.http.scaladsl.common.EntityStreamingSupport
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.stream._
 import akka.stream.scaladsl._
 import org.slf4j.LoggerFactory
+import org.fabian.dashboard.board.{BoardService, MeasurePayload}
 
-import org.fabian.dashboard.board.BoardService
-
-class BoardRoute(service: BoardService)
-(implicit system: ActorSystem, materializer: ActorMaterializer) {
+class BoardRoute(service: BoardService)(implicit system: ActorSystem, materializer: ActorMaterializer) {
   val logger = LoggerFactory.getLogger(getClass)
 
   implicit val ec = system.dispatchers.lookup("my-dispatcher")
-  import akka.http.scaladsl.marshalling.sse.EventStreamMarshalling._
 
-  def routes = path("events") {
+  implicit val jsonStreamingSupport = EntityStreamingSupport.json()
+
+  def routes = path("events") { streamEvents ~ updateMeasures}
+
+  private def streamEvents = {
+    import akka.http.scaladsl.marshalling.sse.EventStreamMarshalling._
+    import akka.http.scaladsl.model.sse.ServerSentEvent
     get(
       complete {
         Source
@@ -29,4 +32,15 @@ class BoardRoute(service: BoardService)
       })
   }
 
+  private def updateMeasures = {
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+    post {
+      entity(as[MeasurePayload]) { payload =>
+        onSuccess(service.updateScore(payload)) {
+          case Some(updatedPayload) => complete(updatedPayload)
+          case None => complete(StatusCodes.BadRequest, "Impossible to update measure")
+        }
+      }
+    }
+  }
 }

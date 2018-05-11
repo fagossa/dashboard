@@ -55,7 +55,7 @@ case class BoardResult(
 )
 
 object BoardResult {
-  implicit val boardFormat: Format[BoardResult] = Json.format
+  implicit val boardFormat = Json.format[BoardResult]
 }
 
 case class MeasurePayload(user: String, billed: Int) {
@@ -63,7 +63,7 @@ case class MeasurePayload(user: String, billed: Int) {
 }
 
 object MeasurePayload {
-  implicit val boardFormat: Format[MeasurePayload] = Json.format
+  implicit val boardFormat = Json.format[MeasurePayload]
 }
 
 object DataTools {
