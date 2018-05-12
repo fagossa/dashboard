@@ -20,7 +20,7 @@ object NpmPlugin extends AutoPlugin {
   )
 
   object Settings {
-    lazy val npmInstall = autoImport.npmInstall := command(Seq("--prefix ./client", "install"), thisProject.value.base, streams.value)
+    lazy val npmInstall = autoImport.npmInstall := command(Seq("--prefix ./client", "install", "./client"), thisProject.value.base, streams.value)
   }
 
   def command(args: Seq[String], cwd: File, steamTask: TaskStreams): Unit = {

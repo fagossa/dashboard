@@ -58,7 +58,7 @@ export const Board = Vue.component('board', {
   },
   methods: {
     setupStream: function() {
-      let es = new EventSource('http://localhost:8080/board/events');
+      let es = new EventSource('http://serverless-dashboard.cleverapps.io/board/events');
 
       let buildScore = function(s) {
         return {

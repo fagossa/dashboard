@@ -2,21 +2,24 @@ package org.fabian.dashboard.board
 
 import java.time.LocalDateTime
 
+import akka.actor.ActorRef
+
 import scala.collection.immutable.Queue
-
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-
+import akka.util.Timeout
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.libs.json.Json
-
 import org.fabian.dashboard.routes.BoardRoute
 
 class TeamScoreSpec extends WordSpec with MustMatchers with ScalaFutures with ScalatestRouteTest {
 
   implicit val ec = scala.concurrent.ExecutionContext.global
 
-  "a TeamScore" should {
+  import scala.concurrent.duration._
+  implicit val actorTimeout: Timeout = Timeout(1.seconds)
+
+  "a TeamScore" must {
 
     "accept less than 10 elements" in {
       // given
@@ -72,7 +75,8 @@ class TeamScoreSpec extends WordSpec with MustMatchers with ScalaFutures with Sc
     }
 
     "create score when do not exists" in {
-      val service = new BoardService
+      val repository: ActorRef = system.actorOf(BoardActorRepository.props)
+      val service = new BoardService(repository)
       // When
       service.updateScore(MeasurePayload("toto", 10)).futureValue
       val result: BoardResult = service.boardResults.futureValue
@@ -84,7 +88,8 @@ class TeamScoreSpec extends WordSpec with MustMatchers with ScalaFutures with Sc
     }
 
     "accumulate scores when they not exists" in {
-      val service = new BoardService
+      val repository: ActorRef = system.actorOf(BoardActorRepository.props)
+      val service = new BoardService(repository)
 
       // When
       service.updateScore(MeasurePayload("titi", 10)).futureValue
@@ -100,7 +105,8 @@ class TeamScoreSpec extends WordSpec with MustMatchers with ScalaFutures with Sc
     }
 
     "handle different users" in {
-      val service = new BoardService
+      val repository: ActorRef = system.actorOf(BoardActorRepository.props)
+      val service = new BoardService(repository)
 
       // When
       service.updateScore(MeasurePayload("titi", 10)).futureValue
@@ -111,6 +117,7 @@ class TeamScoreSpec extends WordSpec with MustMatchers with ScalaFutures with Sc
 
       // Then
       result.scores must have size 3
+      info(result.scores.map(_.name).mkString(" "))
       result.scores.map(_.billed.size) must be (List(1, 1, 1))
       result.scores.flatMap(_.billed).map(_.value).toSet must be(Set(BigDecimal(10), BigDecimal(15), BigDecimal(20)))
     }
@@ -123,8 +130,10 @@ class TeamScoreSpec extends WordSpec with MustMatchers with ScalaFutures with Sc
       import akka.http.scaladsl.model._
       import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
+      val repository: ActorRef = system.actorOf(BoardActorRepository.props)
+
       //when
-      val routes = new BoardRoute(new BoardService()).routes
+      val routes = new BoardRoute(new BoardService(repository)).routes
       val payload = MeasurePayload("toto", 35)
 
       Post("/events", payload) ~> routes ~> check {

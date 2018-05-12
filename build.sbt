@@ -1,7 +1,7 @@
 lazy val akkaHttpVersion = "10.1.1"
 
 lazy val root = (project in file("."))
-  .enablePlugins(NpmPlugin, JavaAppPackaging)
+  .enablePlugins(WebpackPlugin, JavaAppPackaging)
   .settings(
     inThisBuild(List(
       organization := "golang",

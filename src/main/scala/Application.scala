@@ -1,13 +1,12 @@
 import scala.concurrent.Await
 import scala.concurrent.duration._
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
+import akka.util.Timeout
 import org.slf4j.LoggerFactory
-
-import org.fabian.dashboard.board.BoardService
+import org.fabian.dashboard.board.{BoardActorRepository, BoardService}
 import org.fabian.dashboard.repositories.ItemRepository
 import org.fabian.dashboard.routes.JsonRoutes
 import org.fabian.dashboard.routes.IndexRoutes
@@ -30,12 +29,15 @@ object Application extends App {
   val shutdownTimeout = 60.seconds
 
   val workingDirectory = System.getProperty("user.dir")
+  val boardRepository = system.actorOf(BoardActorRepository.props)
+
+  implicit val actorTimeout = Timeout(20.seconds)
 
   val routes =
     pathPrefix("json") { new JsonRoutes(new ItemRepository()).routes } ~
     pathPrefix("assets") { new AssetsRoute(workingDirectory).routes } ~
     pathPrefix("streaming") { new StreamingRoute().routes } ~
-    pathPrefix("board") { new BoardRoute(new BoardService()).routes } ~
+    pathPrefix("board") { new BoardRoute(new BoardService(boardRepository)).routes } ~
     new IndexRoutes(workingDirectory).routes
 
   logger.info(s"Starting server on ${interface}:${port}")
