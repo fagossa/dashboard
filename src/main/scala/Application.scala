@@ -1,20 +1,18 @@
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import scala.util.{Failure, Success}
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import org.slf4j.LoggerFactory
+
 import org.fabian.dashboard.board.{BoardActorRepository, BoardService}
-import org.fabian.dashboard.repositories.ItemRepository
-import org.fabian.dashboard.routes.JsonRoutes
 import org.fabian.dashboard.routes.IndexRoutes
 import org.fabian.dashboard.routes.AssetsRoute
-import org.fabian.dashboard.routes.StreamingRoute
 import org.fabian.dashboard.routes.BoardRoute
-
-import scala.util.{Failure, Success}
 
 object Application extends App {
   implicit val system = ActorSystem("go-as-function-system")
@@ -34,9 +32,7 @@ object Application extends App {
   implicit val actorTimeout = Timeout(20.seconds)
 
   val routes =
-    pathPrefix("json") { new JsonRoutes(new ItemRepository()).routes } ~
     pathPrefix("assets") { new AssetsRoute(workingDirectory).routes } ~
-    pathPrefix("streaming") { new StreamingRoute().routes } ~
     pathPrefix("board") { new BoardRoute(new BoardService(boardRepository)).routes } ~
     new IndexRoutes(workingDirectory).routes
 
