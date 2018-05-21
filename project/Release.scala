@@ -41,6 +41,7 @@ object Release {
       runTest,
       tagRelease,
       setNextVersion,
+      commitNextVersion,
       // publishArtifacts,
       ReleaseStep(releaseStepTask(publish in UniversalPlugin.autoImport.Universal)),
       pushChanges
