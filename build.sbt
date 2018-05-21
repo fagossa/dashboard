@@ -43,6 +43,11 @@ lazy val root = (project in file("."))
  */
 val VersionRegex = "v([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
 
+val showNextVersion = settingKey[String]("the future version once releaseNextVersion has been applied to it")
+val showReleaseVersion = settingKey[String]("the future version once releaseNextVersion has been applied to it")
+showReleaseVersion <<= (version, releaseVersion)((v,f)  => f(v))
+showNextVersion <<= (version, releaseNextVersion)((v,f) => f(v))
+
 // native-packager
 mappings in (Compile, packageDoc) := Seq()
 

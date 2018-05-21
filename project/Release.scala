@@ -40,16 +40,18 @@ object Release {
       setReleaseVersion,
       runTest,
       tagRelease,
+      setNextVersion,
       // publishArtifacts,
-      //ReleaseStep(releaseStepTask(publish in UniversalPlugin.autoImport.Universal)),
-      pushChanges,
-      releaseStepCommand(ExtraReleaseCommands.initialVcsChecksCommand)
+      ReleaseStep(releaseStepTask(publish in UniversalPlugin.autoImport.Universal)),
+      pushChanges
+      //releaseStepCommand(ExtraReleaseCommands.initialVcsChecksCommand),
     )
   }
 
   val settings = Seq(
     releaseCommitMessage := s"Set version to ${(version in ThisBuild).value}",
     releaseTagName := (version in ThisBuild).value,
+    publishTo := Some("temp" at "file:///tmp/repository"),
     releaseProcess := releaseMaster.value
   )
 }
