@@ -41,7 +41,7 @@ object Release {
       runTest,
       tagRelease,
       // publishArtifacts,
-      ReleaseStep(releaseStepTask(publish in UniversalPlugin.autoImport.Universal)),
+      //ReleaseStep(releaseStepTask(publish in UniversalPlugin.autoImport.Universal)),
       pushChanges,
       releaseStepCommand(ExtraReleaseCommands.initialVcsChecksCommand)
     )
