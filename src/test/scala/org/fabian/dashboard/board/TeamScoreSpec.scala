@@ -10,7 +10,6 @@ import akka.util.Timeout
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{MustMatchers, WordSpec}
 import play.api.libs.json.Json
-import org.fabian.dashboard.routes.BoardRoute
 
 class TeamScoreSpec extends WordSpec with MustMatchers with ScalaFutures with ScalatestRouteTest {
 

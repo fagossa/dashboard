@@ -1,12 +1,11 @@
 package org.fabian.dashboard.board
 
+import scala.concurrent.Future
 import akka.actor.ActorRef
 import akka.util.Timeout
-
-import scala.concurrent.{ExecutionContext, Future}
 import org.slf4j.LoggerFactory
 
-class BoardService(actorRepository: ActorRef)(implicit ec: ExecutionContext, timeout: Timeout) {
+class BoardService(actorRepository: ActorRef)(implicit timeout: Timeout) {
 
   val logger = LoggerFactory.getLogger(getClass)
 

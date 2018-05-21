@@ -25,3 +25,10 @@ The rest service uses:
 ```
 sbt> ~reStart
 ```
+
+
+## Releasing anew verison
+
+```
+sbt release with-defaults
+```

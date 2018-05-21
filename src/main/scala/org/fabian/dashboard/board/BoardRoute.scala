@@ -1,17 +1,16 @@
-package org.fabian.dashboard.routes
+package org.fabian.dashboard.board
 
 import scala.concurrent.duration._
+
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.http.scaladsl.common.EntityStreamingSupport
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
-import akka.stream._
 import akka.stream.scaladsl._
 import org.slf4j.LoggerFactory
-import org.fabian.dashboard.board.{BoardService, MeasurePayload}
 
-class BoardRoute(service: BoardService)(implicit system: ActorSystem, materializer: ActorMaterializer) {
+class BoardRoute(service: BoardService)(implicit system: ActorSystem) {
   val logger = LoggerFactory.getLogger(getClass)
 
   implicit val ec = system.dispatchers.lookup("my-dispatcher")

@@ -1,18 +1,14 @@
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import org.slf4j.LoggerFactory
-
-import org.fabian.dashboard.board.{BoardActorRepository, BoardService}
-import org.fabian.dashboard.routes.IndexRoutes
-import org.fabian.dashboard.routes.AssetsRoute
-import org.fabian.dashboard.routes.BoardRoute
+import org.fabian.dashboard.board.{BoardActorRepository, BoardRoute, BoardService}
+import org.fabian.dashboard.common.{AssetsRoute, IndexRoutes, StatusRoute}
 
 object Application extends App {
   implicit val system = ActorSystem("go-as-function-system")
@@ -34,6 +30,7 @@ object Application extends App {
   val routes =
     pathPrefix("assets") { new AssetsRoute(workingDirectory).routes } ~
     pathPrefix("board") { new BoardRoute(new BoardService(boardRepository)).routes } ~
+    pathPrefix("status") { new StatusRoute().routes } ~
     new IndexRoutes(workingDirectory).routes
 
   logger.info(s"Starting server on ${interface}:${port}")
