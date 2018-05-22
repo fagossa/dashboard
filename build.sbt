@@ -1,4 +1,6 @@
-lazy val akkaHttpVersion = "10.1.1"
+lazy val AkkaHttpVersion = "10.1.1"
+lazy val ScalaTestVersion = "3.0.5"
+lazy val LogbackVersion = "1.2.3"
 
 lazy val root = (project in file("."))
   .enablePlugins(BuildInfoPlugin, WebpackPlugin, JavaAppPackaging, GitVersioning, GitBranchPrompt)
@@ -9,39 +11,28 @@ lazy val root = (project in file("."))
     )),
     name := "app-template",
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-http"           % akkaHttpVersion,
+      "com.typesafe.akka" %% "akka-http"           % AkkaHttpVersion,
       "de.heikoseeberger" %% "akka-http-play-json" % "1.20.1",
+
       // logs
-      "ch.qos.logback"    %  "logback-classic"     % "1.2.3" ,
+      "ch.qos.logback"    %  "logback-classic"     % LogbackVersion ,
       "com.typesafe.akka" %% "akka-slf4j"          % "2.5.2",
+
       // test
-      "com.typesafe.akka" %% "akka-http-testkit"   % akkaHttpVersion % Test,
-      "org.scalatest"     %% "scalatest"           % "3.0.5" % Test
+      "com.typesafe.akka" %% "akka-http-testkit"   % AkkaHttpVersion % Test,
+      "org.scalatest"     %% "scalatest"           % ScalaTestVersion % Test
     )
   )
-  .settings(
-    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-    buildInfoPackage := "org.fabian.build"
-  )
-  .settings(
-    git.useGitDescribe := true,
-    git.baseVersion := "0.0.1",
-    git.gitTagToVersionNumber := {
-      case VersionRegex(v,"") => Some(v)
-      case VersionRegex(v,"SNAPSHOT") => Some(s"$v-SNAPSHOT")
-      case VersionRegex(v,s) => Some(s"$v-$s-SNAPSHOT")
-      case _ => None
-    }
-  )
+  .settings(BuildTools.buildInfo.settings)
+  .settings(BuildTools.gitRelease.settings)
+  .settings(BuildTools.fmt.settings)
+  .settings(BuildTools.common.settings)
   .settings(Release.settings)
   .settings(
     fork in run := true,
     fork in Test := true,
     fork in IntegrationTest := true
   )
-  .settings(fmtSettings)
-
-val VersionRegex = "v([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
 
 val showNextVersion = settingKey[String]("the future version once releaseNextVersion has been applied to it")
 val showReleaseVersion = settingKey[String]("the future version once releaseNextVersion has been applied to it")
@@ -50,25 +41,3 @@ showNextVersion <<= (version, releaseNextVersion)((v,f) => f(v))
 
 // native-packager
 mappings in (Compile, packageDoc) := Seq()
-
-lazy val fmtSettings =
-  Seq(
-    scalafmtOnCompile := true,
-    scalafmtOnCompile.in(Sbt) := false,
-    scalafmtVersion := "1.3.0"
-  )
-
-scalacOptions := Seq(
-  "-encoding", "UTF-8",
-  "-target:jvm-1.8",
-  "-Ywarn-infer-any",
-  "-Ywarn-dead-code",
-  "-Ywarn-unused",
-  "-Ywarn-unused-import",
-  "-Ywarn-value-discard",
-  "-unchecked",
-  "-deprecation",
-  "-feature",
-  "-g:vars",
-  "-Xlint:_"
-)
