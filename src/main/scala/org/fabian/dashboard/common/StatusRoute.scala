@@ -3,11 +3,11 @@ package org.fabian.dashboard.common
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
-import akka.http.scaladsl.server.Directives.{get, _}
+import akka.http.scaladsl.model.{ ContentTypes, HttpEntity, HttpResponse }
+import akka.http.scaladsl.server.Directives.{ get, _ }
 import akka.http.scaladsl.server.Route
 import org.slf4j.LoggerFactory
-import play.api.libs.json.{JsString, JsValue, Json, Writes}
+import play.api.libs.json.{ JsString, JsValue, Json, Writes }
 
 class StatusRoute() {
 
@@ -22,7 +22,11 @@ class StatusRoute() {
   private val buildInfo = {
     path("build") {
       get {
-        complete(HttpResponse(entity = HttpEntity(ContentTypes.`application/json`, Json.stringify(buildInfoToJson))))
+        complete(
+          HttpResponse(
+            entity = HttpEntity(ContentTypes.`application/json`, Json.stringify(buildInfoToJson))
+          )
+        )
       }
     }
   }
@@ -30,7 +34,7 @@ class StatusRoute() {
   private def buildInfoToJson: JsValue = {
     import org.fabian.build.BuildInfo._
     Json.obj(
-      "version" -> version,
+      "version"   -> version,
       "timestamp" -> Json.toJson(LocalDateTime.now())(isoDateTimeWrites)
     )
   }

@@ -1,6 +1,6 @@
 package org.fabian
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{ Json, Writes }
 
 package object dashboard {
 

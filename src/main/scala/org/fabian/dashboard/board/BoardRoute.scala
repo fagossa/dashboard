@@ -17,18 +17,17 @@ class BoardRoute(service: BoardService)(implicit system: ActorSystem) {
 
   implicit val jsonStreamingSupport = EntityStreamingSupport.json()
 
-  def routes = path("events") { streamEvents ~ updateMeasures}
+  def routes = path("events") { streamEvents ~ updateMeasures }
 
   private def streamEvents = {
     import akka.http.scaladsl.marshalling.sse.EventStreamMarshalling._
     import akka.http.scaladsl.model.sse.ServerSentEvent
-    get(
-      complete {
-        Source
-          .tick(2.seconds, 2.seconds, NotUsed)
-          .mapAsync(1)(_ => service.boardResults.map(result => ServerSentEvent(result.stringify)))
-          .keepAlive(1.second, () => ServerSentEvent.heartbeat)
-      })
+    get(complete {
+      Source
+        .tick(2.seconds, 2.seconds, NotUsed)
+        .mapAsync(1)(_ => service.boardResults.map(result => ServerSentEvent(result.stringify)))
+        .keepAlive(1.second, () => ServerSentEvent.heartbeat)
+    })
   }
 
   private def updateMeasures = {
@@ -37,7 +36,7 @@ class BoardRoute(service: BoardService)(implicit system: ActorSystem) {
       entity(as[MeasurePayload]) { payload =>
         onSuccess(service.updateScore(payload)) {
           case Some(updatedPayload) => complete(updatedPayload)
-          case None => complete(StatusCodes.BadRequest, "Impossible to update measure")
+          case None                 => complete(StatusCodes.BadRequest, "Impossible to update measure")
         }
       }
     }

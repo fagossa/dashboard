@@ -1,8 +1,8 @@
 package org.fabian.dashboard.board
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{ Actor, ActorLogging, Props }
 import akka.event.Logging
-import org.fabian.dashboard.board.BoardActorRepository.Messages.{GetState, UpdateScore}
+import org.fabian.dashboard.board.BoardActorRepository.Messages.{ GetState, UpdateScore }
 import org.fabian.dashboard.board.DataTools.randomColor
 
 import scala.collection.mutable

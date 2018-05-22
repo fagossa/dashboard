@@ -34,13 +34,13 @@ lazy val root = (project in file("."))
     }
   )
   .settings(Release.settings)
+  .settings(
+    fork in run := true,
+    fork in Test := true,
+    fork in IntegrationTest := true
+  )
+  .settings(fmtSettings)
 
-/* Accepted version format
- * 0.0.0-SNAPSHOT
- * 0.0.0-xxxxx-SNAPSHOT //with xxxxxx a SHA-1
- * 1.0.0 // for a commit whose SHA-1 has been tagged with v1.0.0
- * 1.0.0-2-yyyyy-SNAPSHOT // for the second commit after the tag
- */
 val VersionRegex = "v([0-9]+.[0-9]+.[0-9]+)-?(.*)?".r
 
 val showNextVersion = settingKey[String]("the future version once releaseNextVersion has been applied to it")
@@ -50,6 +50,13 @@ showNextVersion <<= (version, releaseNextVersion)((v,f) => f(v))
 
 // native-packager
 mappings in (Compile, packageDoc) := Seq()
+
+lazy val fmtSettings =
+  Seq(
+    scalafmtOnCompile := true,
+    scalafmtOnCompile.in(Sbt) := false,
+    scalafmtVersion := "1.3.0"
+  )
 
 scalacOptions := Seq(
   "-encoding", "UTF-8",

@@ -1,7 +1,7 @@
 package org.fabian.dashboard.board
 
 import java.time.LocalDateTime
-import play.api.libs.json.{Format, JsResult, JsValue, Json}
+import play.api.libs.json.{ Format, JsResult, JsValue, Json }
 import scala.collection.immutable.Queue
 
 case class Measure(time: LocalDateTime, value: BigDecimal)
